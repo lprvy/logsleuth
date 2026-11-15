@@ -49,7 +49,10 @@ Exit codes: `0` ok · `1` `--fail-over` limit exceeded · `2` input error (e.g. 
 ## What it understands
 
 - **Levels** in plain (`ERROR`), bracketed (`[WARN]`), key-value (`level=info`), JSON (`"level":"fatal"`), syslog (`warning:`) and Rust panic (`panicked`) styles, case-insensitive. Words that merely contain a level (`terrorism`) are ignored.
-- **Masked values:** timestamps, UUIDs, emails, IPv4 addresses (with port), hex values, long hashes, quoted strings, numbers with units (`350ms`, `20MB`, `99%`).
+- **Timestamps:** ISO 8601 (`2026-11-15T10:00:01Z`, `2026-11-15 10:00:01,123`) and syslog (`Nov 15 10:00:05`), used for the "seen … → …" range.
+- **Kubernetes / Go klog lines** (`E1115 10:00:07.123456 12345 controller.go:114] …`): the level comes from the first letter (`I`, `W`, `E`, `F`) and the time from the prefix.
+- **Masked values:** timestamps, UUIDs, emails, IPv4 addresses (with port), hex values, long hashes, quoted strings, numbers with units (`350ms`, `20MB`, `99%`), and ids that mix letters and digits (pod suffixes like `api-7d9f8`, host names like `web01` → `<id>`).
+- **Context in brackets** such as `[worker-3]` stays whole (`[worker-<n>]`); only the brackets left empty by removing the level or time are dropped.
 - **Messy input:** invalid UTF-8 bytes and Windows line endings don't stop it.
 
 ## Development
