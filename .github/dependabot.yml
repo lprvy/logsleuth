@@ -1,4 +1,5 @@
-# Monthly, grouped update PRs. CI runs on each one.
+# Monthly update PRs. Minor and patch updates are grouped; each major update gets its own PR,
+# so one breaking upgrade does not hold back the rest. CI runs on each one.
 version: 2
 updates:
   - package-ecosystem: "cargo"
@@ -8,6 +9,7 @@ updates:
     groups:
       cargo-deps:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
