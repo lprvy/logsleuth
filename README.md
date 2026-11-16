@@ -4,7 +4,7 @@ A fast command-line tool, written in Rust, that reads a log file and tells you *
 
 It groups lines that differ only in ids, numbers, IPs or timestamps, so 3,000 copies of the same timeout turn into one line with `x3000`.
 
-![CI](https://github.com/lprvy/logsleuth/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/lprvy/logsleuth/actions/workflows/ci.yml/badge.svg)](https://github.com/lprvy/logsleuth/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/lprvy/logsleuth)](https://github.com/lprvy/logsleuth/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ```text
 $ logsleuth examples/app.log
