@@ -23,6 +23,10 @@ $ logsleuth examples/app.log
 
 ## Install
 
+Prebuilt binaries for Linux (x86_64), macOS (Apple silicon) and Windows (x86_64) are on the [releases page](https://github.com/lprvy/logsleuth/releases/latest): download, unpack and put `logsleuth` on your `PATH`.
+
+Or build it with Cargo:
+
 ```bash
 cargo install --git https://github.com/lprvy/logsleuth
 ```
