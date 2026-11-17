@@ -39,6 +39,7 @@ logsleuth app.log other.log -l error      # several files, ERROR and above
 kubectl logs my-pod | logsleuth -n 5      # from stdin, top 5 groups
 logsleuth app.log -f json                 # machine-readable output
 logsleuth app.log --fail-over 0           # exit 1 if there is any ERROR/FATAL line (CI gate)
+logsleuth app.log -x healthcheck -x 'GET /metrics'   # ignore known noise
 ```
 
 | Option | Default | |
@@ -47,8 +48,9 @@ logsleuth app.log --fail-over 0           # exit 1 if there is any ERROR/FATAL l
 | `-n, --top` | `10` | max groups to show |
 | `-f, --format` | `text` | `text` or `json` |
 | `--fail-over N` | – | exit code 1 when more than N lines are ERROR or worse |
+| `-x, --exclude REGEX` | – | skip lines that match ([regex syntax](https://docs.rs/regex/latest/regex/#syntax)); repeatable. Skipped lines are not counted |
 
-Exit codes: `0` ok · `1` `--fail-over` limit exceeded · `2` input error (e.g. missing file).
+Exit codes: `0` ok · `1` `--fail-over` limit exceeded · `2` input error (e.g. missing file, invalid `--exclude` pattern).
 
 ## What it understands
 
@@ -62,7 +64,7 @@ Exit codes: `0` ok · `1` `--fail-over` limit exceeded · `2` input error (e.g. 
 ## Development
 
 ```bash
-cargo test     # 14 tests: 9 unit + 5 end-to-end that run the real binary
+cargo test     # 20 tests: 13 unit + 7 end-to-end that run the real binary
 cargo clippy --all-targets -- -D warnings
 ```
 

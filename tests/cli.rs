@@ -85,3 +85,32 @@ fn missing_file_is_a_clear_error() {
     assert_eq!(out.status.code(), Some(2));
     assert!(String::from_utf8_lossy(&out.stderr).contains("does-not-exist.log"));
 }
+
+#[test]
+fn exclude_skips_matching_lines() {
+    let out = run(
+        &[
+            "examples/app.log",
+            "-x",
+            "payment provider",
+            "--exclude",
+            "(?i)coupon",
+        ],
+        None,
+    );
+    assert!(out.status.success());
+    let text = stdout(&out);
+    assert!(
+        text.starts_with("8 lines · 4 INFO · 3 WARN · 1 FATAL"),
+        "{text}"
+    );
+    assert!(!text.contains("payment provider"), "{text}");
+    assert!(!text.contains("coupon"), "{text}");
+}
+
+#[test]
+fn bad_exclude_pattern_is_a_clear_error() {
+    let out = run(&["examples/app.log", "-x", "("], None);
+    assert_eq!(out.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&out.stderr).contains("bad --exclude pattern"));
+}

@@ -5,6 +5,7 @@ mod report;
 
 use clap::{Parser, ValueEnum};
 use parse::{Level, parse_line};
+use regex::Regex;
 use report::Analyzer;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Read};
@@ -60,6 +61,10 @@ struct Cli {
     /// Exit with code 1 when more than N lines are ERROR or worse (for CI)
     #[arg(long, value_name = "N")]
     fail_over: Option<usize>,
+
+    /// Skip lines that match this regex (repeatable), e.g. known noise
+    #[arg(short = 'x', long, value_name = "REGEX")]
+    exclude: Vec<String>,
 }
 
 fn open(path: &PathBuf) -> io::Result<Box<dyn Read>> {
@@ -71,6 +76,18 @@ fn open(path: &PathBuf) -> io::Result<Box<dyn Read>> {
 }
 
 fn run(cli: Cli) -> io::Result<ExitCode> {
+    let excludes = cli
+        .exclude
+        .iter()
+        .map(|p| {
+            Regex::new(p).map_err(|e| {
+                io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    format!("bad --exclude pattern: {e}"),
+                )
+            })
+        })
+        .collect::<io::Result<Vec<_>>>()?;
     let mut analyzer = Analyzer::new(cli.level.into());
     let sources = if cli.files.is_empty() {
         vec![PathBuf::from("-")]
@@ -89,7 +106,7 @@ fn run(cli: Cli) -> io::Result<ExitCode> {
             let text = String::from_utf8_lossy(&line?)
                 .trim_end_matches('\r')
                 .to_string();
-            if text.trim().is_empty() {
+            if text.trim().is_empty() || excludes.iter().any(|re| re.is_match(&text)) {
                 continue;
             }
             analyzer.add(line_no, &text, parse_line(&text));
