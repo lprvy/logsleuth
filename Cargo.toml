@@ -2,6 +2,12 @@
 name = "logsleuth"
 version = "0.2.0"
 edition = "2024"
+description = "Groups repeated log lines and shows what went wrong, how often, and when"
+license = "MIT"
+repository = "https://github.com/lprvy/logsleuth"
+readme = "README.md"
+keywords = ["logs", "cli", "logging", "debugging", "log-analysis"]
+categories = ["command-line-utilities", "development-tools::debugging"]
 
 [dependencies]
 clap = { version = "4.6.7", default-features = false, features = ["std", "derive", "help", "usage", "error-context", "suggestions"] }
